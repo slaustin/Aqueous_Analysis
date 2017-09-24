@@ -16,7 +16,7 @@ cp $install_dir/install.com $backupdir/
 cp $install_dir/source/charmm/charmm_main.src $backupdir/
 echo "Modifying Source..."
 echo ""
-echo "Installing SA_Analysis Features..."
+echo "Installing WatKit_Analysis Features..."
 echo ""
 rm $install_dir/build/gnu/pref.dat
 cp file_cabinet/wat_charmm_install_files/wat_objlibs.mk $install_dir/build/gnu/objlibs.mk
