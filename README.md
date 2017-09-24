@@ -3,6 +3,6 @@
 # Currently Supports Interface with CHARMM MD Engine
 # Installation: Place analysis_container in CHARMM source
 # Modify wat_make.sh for compile options, include SAANA keyword
-# ./install
+# ./install.sh
 #
 # Example inputs and outputs found in examples
