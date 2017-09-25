@@ -5,4 +5,3 @@
 # Modify wat_make.sh for compile options, include SAANA keyword
 # ./install.sh
 #
-# Example inputs and outputs found in examples
