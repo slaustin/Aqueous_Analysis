@@ -1,0 +1,76 @@
+* 1ebm-ss CHARMM script.
+*
+
+bomb -5
+fast on
+
+set 3 300.0
+set d ../../setup/
+set j gh
+set ndyn 100000000
+
+PRNLEV 0
+
+stream @d/toppar2.str
+
+OPEN UNIT 3 NAME @d/step3_pbcsetup.oldpsf READ  FORM
+READ  PSF CARD UNIT 3
+CLOSE UNIT 3
+
+OPEN UNIT 3 NAME @d/step4_equilibration.crd READ FORM
+READ  COOR CARD UNIT 3
+CLOSE UNIT 3
+
+stream @d/step3_pbcsetup.str
+
+open read unit 10 card name @d/crystal_image.str
+CRYSTAL DEFINE @XTLtype @A @B @C @alpha @beta @gamma
+CRYSTAL READ UNIT 10 CARD
+
+!Image centering by residue
+!IMAGE BYRESID XCEN 0.0 YCEN 0.0 ZCEN 0.0 sele resname TIP3  end
+!IMAGE BYSEGMENT XCEN 0.0 YCEN 0.0 ZCEN 0.0 sele segid PROA  end
+!IMAGE BYRESID XCEN 0.0 YCEN 0.0 ZCEN 0.0 sele segid @posid  end
+!IMAGE BYRESID XCEN 0.0 YCEN 0.0 ZCEN 0.0 sele segid @negid  end
+
+!
+! Nonbonded Options
+!
+nbonds atom vatom vswitch - ! bycb -
+       ctonnb 8.0 ctofnb 10.0 cutnb 14.0 cutim 14.0 -
+       inbfrq -1 imgfrq -1 wmin 1.0 cdie eps 1.0 -
+       ewald pmew fftx @fftx ffty @ffty fftz @fftz  kappa .34 spline order 6
+
+SHAKE fast BONH PARAm TOL 1.0e-6
+
+open read unit 109 file name ../dyn.dcd
+
+set i 1
+
+COOR COPY COMP
+
+TRAJ IREAD 109 BEGIN 2000 SKIP 2000
+  label loop
+
+    Traj read
+
+    update imall cutim 40
+    COOR ORIE IMAG RMS SELE SEGID PROA .and. .not. hydrogen end
+
+if i eq 1 SAPI
+if i eq 1 MKSL select type OH2 end
+
+if i eq 1 IGRD
+          IRAD
+if i gt 1 MKSI select type OH2 end
+!if i gt 1 MKSI select segid PROA end
+
+    CNWD
+    DESL
+    DRAD
+
+    incr i by 1
+    if i le 1000 goto loop
+
+stop
+
